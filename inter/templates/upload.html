@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传文件 - 内网导外网数据文件审核系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left h1 {
+            font-size: 24px;
+            margin-bottom: 5px;
+        }
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .user-info {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .form-container {
+            padding: 40px;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #495057;
+        }
+        .form-group input[type="text"],
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .form-group input[type="text"]:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .file-upload {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f8f9fa;
+        }
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #e9ecef;
+        }
+        .file-upload.dragover {
+            border-color: #667eea;
+            background: #e3f2fd;
+        }
+        .file-upload input {
+            display: none;
+        }
+        .file-upload-icon {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        .file-upload-text {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        .file-name {
+            margin-top: 10px;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #495057;
+            word-break: break-all;
+        }
+        .file-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 8px;
+            font-size: 13px;
+            color: #6c757d;
+        }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover:not(:disabled) {
+            background: #5a6fd6;
+            transform: translateY(-2px);
+        }
+        .btn-primary:disabled {
+            background: #a7b1e8;
+            cursor: not-allowed;
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        .flash-messages {
+            padding: 0 40px;
+        }
+        .flash {
+            padding: 15px 20px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            animation: slideIn 0.3s ease;
+        }
+        .flash-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .flash-danger {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .flash-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 25px;
+        }
+        .warning-box h3 {
+            color: #856404;
+            font-size: 14px;
+            margin-bottom: 10px;
+        }
+        .warning-box ul {
+            color: #856404;
+            font-size: 13px;
+            padding-left: 20px;
+        }
+        .warning-box li {
+            margin-bottom: 5px;
+        }
+        .progress-container {
+            margin-top: 20px;
+            display: none;
+        }
+        .progress-container.active {
+            display: block;
+        }
+        .progress-bar-container {
+            background: #e9ecef;
+            border-radius: 5px;
+            overflow: hidden;
+            height: 30px;
+            position: relative;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 100%;
+            transition: width 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .progress-text {
+            position: absolute;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-weight: 600;
+            font-size: 14px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        .status-text {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #495057;
+            text-align: center;
+        }
+        .status-text.merging {
+            color: #ff9800;
+        }
+        .status-text.completed {
+            color: #28a745;
+        }
+        .status-text.error {
+            color: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>📤 上传文件</h1>
+            </div>
+            <div class="header-right">
+                <span class="user-info">👤 {{ user.full_name }}</span>
+            </div>
+        </div>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for category, message in messages %}
+                        <div class="flash flash-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        
+        <div class="form-container">
+            <div class="warning-box">
+                <h3>⚠️ 文件上传要求</h3>
+                <ul>
+                    <li>支持最大8GB文件上传</li>
+                    <li>仅允许上传二进制文件</li>
+                    <li>禁止上传代码文件（.py, .js, .java, .c, .cpp等）</li>
+                    <li>支持PDF、Office文档、图片、视频、音频、压缩包等</li>
+                </ul>
+            </div>
+            
+            <form id="uploadForm">
+                <div class="form-group">
+                    <label for="reason">导出原因</label>
+                    <textarea id="reason" name="reason" placeholder="请简要说明文件导出的原因和用途" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>选择文件</label>
+                    <label class="file-upload" id="fileUpload">
+                        <input type="file" name="file" id="file" required>
+                        <div class="file-upload-icon">📁</div>
+                        <div class="file-upload-text">点击选择文件或拖拽文件到此处</div>
+                        <div id="file-name" class="file-name" style="display: none;"></div>
+                        <div id="file-info" class="file-info" style="display: none;"></div>
+                    </label>
+                </div>
+                
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-bar-container">
+                        <div class="progress-bar" id="progressBar" style="width: 0%;"></div>
+                        <div class="progress-text" id="progressText">0% (0.00MB / 0.00MB)</div>
+                    </div>
+                    <div class="status-text" id="statusText">准备上传...</div>
+                </div>
+                
+                <div class="btn-group">
+                    <a href="{{ url_for('index') }}" class="btn btn-secondary">返回首页</a>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">提交审核</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        let selectedFile = null;
+        const CHUNK_SIZE = 4 * 1024 * 1024; // 4MB
+        let uploadId = null;
+        let isUploading = false;
+        let progressInterval = null;
+        
+        // 格式化文件大小为MB
+        function formatMB(bytes) {
+            return (bytes / (1024 * 1024)).toFixed(2) + 'MB';
+        }
+        
+        // 格式化文件大小（完整格式）
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // 生成唯一ID
+        function generateUploadId() {
+            return Date.now().toString(36) + Math.random().toString(36).substr(2);
+        }
+        
+        // 文件选择处理
+        const fileInput = document.getElementById('file');
+        const fileUploadLabel = document.getElementById('fileUpload');
+        const fileNameDiv = document.getElementById('file-name');
+        const fileInfoDiv = document.getElementById('file-info');
+        
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        function handleFileSelect(e) {
+            if (e.target.files.length > 0) {
+                selectedFile = e.target.files[0];
+                
+                // 检查文件大小是否超过8GB
+                const maxSize = 8 * 1024 * 1024 * 1024; // 8GB
+                if (selectedFile.size > maxSize) {
+                    alert('文件大小超过8GB限制！');
+                    selectedFile = null;
+                    document.getElementById('file').value = ''; // 清空选择
+                    return;
+                }
+                
+                fileNameDiv.textContent = '已选择: ' + selectedFile.name;
+                fileNameDiv.style.display = 'block';
+                fileInfoDiv.innerHTML = '<span>文件大小: ' + formatFileSize(selectedFile.size) + '</span><span>类型: ' + (selectedFile.type || '未知') + '</span>';
+                fileInfoDiv.style.display = 'flex';
+            } else {
+                selectedFile = null;
+                fileNameDiv.style.display = 'none';
+                fileInfoDiv.style.display = 'none';
+            }
+        }
+        
+        // 拖放功能
+        fileUploadLabel.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            fileUploadLabel.classList.add('dragover');
+        });
+        
+        fileUploadLabel.addEventListener('dragleave', () => {
+            fileUploadLabel.classList.remove('dragover');
+        });
+        
+        fileUploadLabel.addEventListener('drop', (e) => {
+            e.preventDefault();
+            fileUploadLabel.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                fileInput.files = e.dataTransfer.files;
+                handleFileSelect({ target: { files: e.dataTransfer.files } });
+            }
+        });
+        
+        // 表单提交处理
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (isUploading) {
+                alert('正在上传中，请稍候...');
+                return;
+            }
+            
+            if (!selectedFile) {
+                alert('请选择文件');
+                return;
+            }
+            
+            const reason = document.getElementById('reason').value;
+            if (!reason.trim()) {
+                alert('请填写导出原因');
+                return;
+            }
+            
+            isUploading = true;
+            uploadId = generateUploadId();
+            document.getElementById('submitBtn').disabled = true;
+            document.getElementById('progressContainer').classList.add('active');
+            document.getElementById('progressText').textContent = '0% (0.00MB / ' + formatMB(selectedFile.size) + ')';
+            document.getElementById('statusText').textContent = '准备上传...';
+            
+            const totalChunks = Math.ceil(selectedFile.size / CHUNK_SIZE);
+            
+            try {
+                await uploadChunks(totalChunks, reason);
+            } catch (error) {
+                console.error('上传错误:', error);
+                document.getElementById('statusText').textContent = '上传失败: ' + (error.message || '未知错误');
+                document.getElementById('statusText').className = 'status-text error';
+                document.getElementById('submitBtn').disabled = false;
+                isUploading = false;
+                if (progressInterval) clearInterval(progressInterval);
+            }
+        });
+        
+        async function uploadChunks(totalChunks, reason) {
+            for (let i = 0; i < totalChunks; i++) {
+                const start = i * CHUNK_SIZE;
+                const end = Math.min(start + CHUNK_SIZE, selectedFile.size);
+                const chunk = selectedFile.slice(start, end);
+                
+                const formData = new FormData();
+                formData.append('chunk', chunk);
+                formData.append('chunkIndex', i);
+                formData.append('totalChunks', totalChunks);
+                formData.append('uploadId', uploadId);
+                formData.append('filename', selectedFile.name);
+                
+                // 先更新进度显示，再发送请求
+                const uploadedBytes = Math.min((i + 1) * CHUNK_SIZE, selectedFile.size);
+                const progress = Math.round((uploadedBytes / selectedFile.size) * 100);
+                document.getElementById('progressBar').style.width = progress + '%';
+                document.getElementById('progressText').textContent = progress + '% (' + formatMB(uploadedBytes) + ' / ' + formatMB(selectedFile.size) + ')';
+                document.getElementById('statusText').textContent = '正在上传: ' + (i + 1) + '/' + totalChunks + ' (' + progress + '%)';
+                
+                const response = await fetch('/upload/chunk', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (!result.success) {
+                    throw new Error(result.error || '上传失败');
+                }
+                
+                if (result.status === 'completed') {
+                    document.getElementById('statusText').textContent = '正在合并文件...';
+                    document.getElementById('statusText').className = 'status-text merging';
+                    
+                    // 完成文件处理
+                    const completeFormData = new FormData();
+                    completeFormData.append('reason', reason);
+                    
+                    const completeResponse = await fetch('/upload/complete/' + uploadId, {
+                        method: 'POST',
+                        body: completeFormData
+                    });
+                    
+                    const completeResult = await completeResponse.json();
+                    
+                    if (completeResult.success) {
+                        document.getElementById('statusText').textContent = '上传完成！';
+                        document.getElementById('statusText').className = 'status-text completed';
+                        setTimeout(() => {
+                            window.location.href = completeResult.redirect;
+                        }, 500);
+                    } else {                     
+                        throw new Error(completeResult.error || '处理失败');
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+[database]
+host = localhost
+port = 3306
+username = root
+password = your_password
+database = file_audit_system
+charset = utf8mb4
+
+[ldap]
+server = ldap://localhost:389
+account_base = ou=users,dc=example,dc=com
+account_pattern = (uid=%s)
+account_full_name = cn
+account_email_address = mail
+
+[email]
+smtp_server = smtp.example.com
+smtp_port = 587
+smtp_username = no-reply@example.com
+smtp_password = your_email_password
+sender_email = no-reply@example.com
+use_tls = true

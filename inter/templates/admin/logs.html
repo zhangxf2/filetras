@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>操作日志 - 内网导外网数据文件审核系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .user-info {
+            background: rgba(255,255,255,0.2);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        .nav {
+            background: #f8f9fa;
+            padding: 20px 30px;
+            display: flex;
+            gap: 15px;
+        }
+        .btn {
+            padding: 10px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-primary { background: #667eea; color: white; }
+        .btn-primary:hover { background: #5a6fd6; transform: translateY(-2px); }
+        .btn-secondary { background: #6c757d; color: white; }
+        .btn-secondary:hover { background: #5a6268; }
+        .content { padding: 30px; }
+        .section h2 {
+            font-size: 22px;
+            color: #333;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 13px;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e9ecef;
+        }
+        .table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #495057;
+        }
+        .table tr:hover { background: #f8f9fa; }
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+        .badge-login { background: #28a745; color: white; }
+        .badge-upload { background: #667eea; color: white; }
+        .badge-download { background: #17a2b8; color: white; }
+        .badge-approve { background: #28a745; color: white; }
+        .badge-reject { background: #dc3545; color: white; }
+        .badge-logout { background: #6c757d; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="header-left">
+                <h1>📋 操作日志</h1>
+                <p>查看所有用户的操作记录</p>
+            </div>
+            <div class="header-right">
+                <span class="user-info">👤 {{ user.full_name }}</span>
+                <a href="{{ url_for('logout') }}" class="btn btn-secondary">退出</a>
+            </div>
+        </div>
+        
+        <div class="nav">
+            <a href="{{ url_for('index') }}" class="btn btn-primary">🏠 首页</a>
+            <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">👥 用户管理</a>
+            <a href="{{ url_for('admin_file_types') }}" class="btn btn-secondary">📁 文件类型管理</a>
+            <a href="{{ url_for('admin_logs') }}" class="btn btn-secondary">📋 操作日志</a>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h2>最近操作记录</h2>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>操作人</th>
+                            <th>操作类型</th>
+                            <th>资源类型</th>
+                            <th>资源ID</th>
+                            <th>详细信息</th>
+                            <th>IP地址</th>
+                            <th>操作时间</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for log in logs %}
+                        <tr>
+                            <td>{{ log.id }}</td>
+                            <td>{{ log.user_name or '系统' }}</td>
+                            <td>
+                                <span class="badge badge-{{ log.action }}">{{ log.action }}</span>
+                            </td>
+                            <td>{{ log.resource_type or '-' }}</td>
+                            <td>{{ log.resource_id or '-' }}</td>
+                            <td style="max-width:300px;word-break:break-all">{{ log.details or '-' }}</td>
+                            <td>{{ log.ip_address or '-' }}</td>
+                            <td>{{ log.created_at }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

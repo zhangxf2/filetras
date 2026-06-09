@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>编辑用户 - 内网导外网数据文件审核系统</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 700px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .form-container {
+            padding: 40px;
+        }
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .user-info h3 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        .user-info p {
+            color: #6c757d;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .form-group {
+            margin-bottom: 25px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #495057;
+            font-size: 16px;
+        }
+        .role-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .role-item:hover {
+            background: #e9ecef;
+        }
+        .role-item input {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .role-item span {
+            font-size: 14px;
+            flex: 1;
+        }
+        .role-item .role-desc {
+            font-size: 12px;
+            color: #6c757d;
+        }
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+        .btn {
+            flex: 1;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.3s;
+            text-decoration: none;
+            text-align: center;
+        }
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #5a6fd6;
+            transform: translateY(-2px);
+        }
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>✏️ 编辑用户角色</h1>
+        </div>
+        <div class="form-container">
+            <div class="user-info">
+                <h3>{{ user.full_name }}</h3>
+                <p><strong>用户名:</strong> {{ user.username }}</p>
+                <p><strong>邮箱:</strong> {{ user.email or '-' }}</p>
+                <p><strong>创建时间:</strong> {{ user.created_at }}</p>
+            </div>
+            
+            <form method="POST" action="{{ url_for('update_user_roles', user_id=user.id) }}">
+                <div class="form-group">
+                    <label>选择用户角色</label>
+                    {% for role in all_roles %}
+                    <label class="role-item">
+                        <input type="checkbox" name="roles" value="{{ role.name }}" {% if role.name in user_roles %}checked{% endif %}>
+                        <div>
+                            <span>
+                                {% if role.name == 'admin' %}
+                                    🏆 管理员
+                                {% elif role.name == 'reviewer' %}
+                                    👁️ 审核员
+                                {% elif role.name == 'user' %}
+                                    👤 普通用户
+                                {% else %}
+                                    {{ role.name }}
+                                {% endif %}
+                            </span>
+                            <div class="role-desc">{{ role.description or '' }}</div>
+                        </div>
+                    </label>
+                    {% endfor %}
+                </div>
+                <div class="btn-group">
+                    <a href="{{ url_for('admin_users') }}" class="btn btn-secondary">取消</a>
+                    <button type="submit" class="btn btn-primary">保存修改</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
