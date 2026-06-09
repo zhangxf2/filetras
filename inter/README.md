@@ -1,6 +1,9 @@
 # 内网导外网数据文件安全摆渡系统
 
 一个基于 Python Flask 和 LDAP 认证的安全数据文件导出管理平台，通过审核流程确保只允许导出二进制文件，禁止代码文件外流。
+<img width="424" height="655" alt="93475c4a-1bae-4add-b2d8-40b1025d24f7" src="https://github.com/user-attachments/assets/9a77122b-200a-47af-96ad-2c9a5f67284d" />
+
+
 
 ## 功能特性
 
@@ -53,6 +56,9 @@ python app.py
 ### 4. 访问系统
 
 打开浏览器访问：`http://localhost:5001`
+
+<img width="1395" height="785" alt="85ed350c-a7f4-4f92-856f-2662aef5369f" src="https://github.com/user-attachments/assets/7a94516c-cf02-44f6-b35c-46673d346c52" />
+
 
 ## 文件结构
 
