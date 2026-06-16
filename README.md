@@ -1,6 +1,8 @@
 # 内网导外网数据文件安全摆渡系统
 
 一个基于 Python Flask 和 LDAP 认证的安全数据文件导出管理平台，通过审核流程确保只允许导出二进制文件，禁止代码文件外流。一个具备千人企业大数据传输的内外网文件交换系统。
+<img width="1414" height="772" alt="fe54e690-0a28-49ae-bc51-e05580a773a1" src="https://github.com/user-attachments/assets/17544559-0dda-4b96-9883-21b3a32b68ac" />
+
 
 ## 功能特性
 
@@ -12,6 +14,8 @@
 - 👤 **用户会话管理** - 登录状态保持、安全退出功能
 - 📝 **操作审计记录** - 记录上传人、审核人、时间等信息
 - 🎨 **美观的 Web 界面** - 现代化的 UI 设计
+ <img width="1158" height="834" alt="51bb16a0-a1d9-49fe-a57e-451c888fb0dd" src="https://github.com/user-attachments/assets/90dc70bc-9c7a-473b-81e4-62dc880d1c0e" />
+
 
 ## 技术栈
 
